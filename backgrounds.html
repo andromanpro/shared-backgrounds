@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Lava Orb — Backgrounds Library</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
+  body[data-theme="light"] { background: #f4f5f8; color: #1a1a2e; }
+
+  #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+
+  .panel {
+    position: fixed; top: 20px; left: 20px; z-index: 10;
+    background: rgba(20, 20, 30, 0.85); backdrop-filter: blur(8px);
+    border-radius: 12px; padding: 16px 20px; font-size: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e6edf3;
+  }
+  body[data-theme="light"] .panel { background: rgba(255, 255, 255, 0.9); border-color: rgba(0,0,0,0.1); color: #1a1a2e; }
+
+  .panel h1 { font-size: 16px; margin-bottom: 12px; }
+  .row { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+  label { font-size: 13px; min-width: 80px; }
+
+  .btn {
+    padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer;
+    background: rgba(255,255,255,0.12); color: inherit; border: 1px solid rgba(255,255,255,0.22);
+    font-family: inherit;
+  }
+  .btn:hover { background: rgba(255,255,255,0.18); }
+  body[data-theme="light"] .btn { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.15); }
+  body[data-theme="light"] .btn:hover { background: rgba(0,0,0,0.08); }
+
+  /* Custom dropdown — матчит панель */
+  .dd { position: relative; }
+  .dd-trigger {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    min-width: 120px; padding: 6px 10px 6px 14px;
+    border-radius: 6px; font-size: 13px; cursor: pointer;
+    background: rgba(255,255,255,0.12); color: inherit;
+    border: 1px solid rgba(255,255,255,0.22); user-select: none;
+  }
+  .dd-trigger:hover { background: rgba(255,255,255,0.18); }
+  .dd-trigger::after {
+    content: ''; width: 0; height: 0;
+    border-left: 4px solid transparent; border-right: 4px solid transparent;
+    border-top: 5px solid currentColor; opacity: 0.6;
+    transition: transform 0.15s;
+  }
+  .dd.open .dd-trigger::after { transform: rotate(180deg); }
+
+  .dd-list {
+    position: absolute; top: calc(100% + 6px); left: 0; min-width: 100%;
+    background: rgba(20, 20, 30, 0.95); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px;
+    padding: 4px; z-index: 20;
+    opacity: 0; pointer-events: none; transform: translateY(-4px);
+    transition: opacity 0.12s, transform 0.12s;
+  }
+  .dd.open .dd-list { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .dd-item {
+    padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 13px;
+    white-space: nowrap;
+  }
+  .dd-item:hover { background: rgba(255, 255, 255, 0.10); }
+  .dd-item.active { background: rgba(100, 150, 255, 0.18); color: #9dc3ff; }
+
+  body[data-theme="light"] .dd-trigger { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.15); }
+  body[data-theme="light"] .dd-trigger:hover { background: rgba(0,0,0,0.08); }
+  body[data-theme="light"] .dd-list {
+    background: rgba(255, 255, 255, 0.98); border-color: rgba(0, 0, 0, 0.1);
+  }
+  body[data-theme="light"] .dd-item:hover { background: rgba(0, 0, 0, 0.05); }
+  body[data-theme="light"] .dd-item.active { background: rgba(74, 158, 255, 0.15); color: #2a5fbf; }
+
+  .info { font-size: 11px; opacity: 0.6; margin-top: 12px; max-width: 280px; line-height: 1.4; }
+  code { font-family: monospace; font-size: 11px; padding: 1px 4px; background: rgba(255,255,255,0.08); border-radius: 3px; }
+  body[data-theme="light"] code { background: rgba(0,0,0,0.05); }
+</style>
+</head>
+<body data-theme="dark">
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="panel">
+  <h1>Backgrounds Library</h1>
+  <div class="row">
+    <label>Фон:</label>
+    <div class="dd" id="bg-dd">
+      <div class="dd-trigger" data-value="rain">Rain</div>
+      <div class="dd-list">
+        <div class="dd-item" data-value="none">None</div>
+        <div class="dd-item" data-value="embers">Embers</div>
+        <div class="dd-item" data-value="aurora">Aurora</div>
+        <div class="dd-item" data-value="grid">Synthwave</div>
+        <div class="dd-item active" data-value="rain">Rain</div>
+        <div class="dd-item" data-value="ocean">Ocean</div>
+        <div class="dd-item" data-value="space">Space</div>
+        <div class="dd-item" data-value="abstract">Abstract</div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <label>Тема:</label>
+    <button class="btn" id="theme-toggle">Switch theme</button>
+  </div>
+  <div class="info">
+    Копируй HTML-секцию &lt;canvas id="bg-canvas"&gt; + скрипт <code>backgrounds.js</code> в свой проект. Два элемента и одна строка инициализации.
+  </div>
+</div>
+
+<script src="backgrounds.js"></script>
+<script>
+  var canvas = document.getElementById('bg-canvas');
+  LavaBackgrounds.init(canvas, { mode: 'rain', dark: true });
+
+  // === Custom dropdown logic ===
+  var dd = document.getElementById('bg-dd');
+  var trigger = dd.querySelector('.dd-trigger');
+  var items = dd.querySelectorAll('.dd-item');
+
+  trigger.addEventListener('click', function(e) {
+    e.stopPropagation();
+    dd.classList.toggle('open');
+  });
+  document.addEventListener('click', function() { dd.classList.remove('open'); });
+
+  items.forEach(function(item) {
+    item.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var value = this.dataset.value;
+      items.forEach(function(i) { i.classList.remove('active'); });
+      this.classList.add('active');
+      trigger.textContent = this.textContent;
+      trigger.dataset.value = value;
+      dd.classList.remove('open');
+      LavaBackgrounds.setMode(value);
+    });
+  });
+
+  document.getElementById('theme-toggle').addEventListener('click', function() {
+    var isDark = document.body.getAttribute('data-theme') === 'dark';
+    document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    LavaBackgrounds.setTheme(isDark ? 'light' : 'dark');
+  });
+</script>
+
+</body>
+</html>
