@@ -106,3 +106,7 @@ py -3.14 -m http.server 8887
 - [ ] Добавить `intensity` параметр (0-1) — уменьшать яркость когда поверх рисуется UI
 - [ ] `LavaBackgrounds.pause()/resume()` — экономить батарею на мобильных
 - [ ] `bubbles` вынести в отдельный шейдер (Ocean без них)
+
+---
+
+🌐 [androman.pro](https://androman.pro) · ✈ [Telegram](https://t.me/andromanpro1c)
